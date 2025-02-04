@@ -1,0 +1,57 @@
+import java.util.List;
+
+public class CommentThreadListResponse {
+
+    private String kind;
+    private String etag;
+    private PageInfo pageInfo;
+    private List<Item> items;
+
+    public static class PageInfo {
+        private int totalResults;
+        private int resultsPerPage;
+    }
+
+    public static class Item {
+        private String kind;
+        private String etag;
+        private String id;
+        private Snippet snippet;
+
+        public static class Snippet {
+            private String channelId;
+            private String videoId;
+            private TopLevelComment topLevelComment;
+            private boolean canReply;
+            private int totalReplyCount;
+            private boolean isPublic;
+
+            public static class TopLevelComment {
+                private String kind;
+                private String etag;
+                private String id;
+                private CommentSnippet snippet;
+
+                public static class CommentSnippet {
+                    private String channelId;
+                    private String videoId;
+                    private String textDisplay;
+                    private String textOriginal;
+                    private String authorDisplayName;
+                    private String authorProfileImageUrl;
+                    private String authorChannelUrl;
+                    private AuthorChannelId authorChannelId;
+                    private boolean canRate;
+                    private String viewerRating;
+                    private int likeCount;
+                    private String publishedAt;
+                    private String updatedAt;
+
+                    public static class AuthorChannelId {
+                        private String value;
+                    }
+                }
+            }
+        }
+    }
+}

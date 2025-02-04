@@ -1,0 +1,54 @@
+import java.util.List;
+
+public class PlaylistItemListResponse {
+
+    private String kind;
+    private String etag;
+    private List<Item> items;
+    private PageInfo pageInfo;
+
+    public static class PageInfo {
+        private int totalResults;
+        private int resultsPerPage;
+    }
+
+    public static class Item {
+        private String kind;
+        private String etag;
+        private String id;
+        private Snippet snippet;
+
+        public static class Snippet {
+            private String publishedAt;
+            private String channelId;
+            private String title;
+            private String description;
+            private Thumbnails thumbnails;
+            private String channelTitle;
+            private String playlistId;
+            private int position;
+            private ResourceId resourceId;
+            private String videoOwnerChannelTitle;
+            private String videoOwnerChannelId;
+
+            public static class Thumbnails {
+                private Thumbnail defaultThumbnail;
+                private Thumbnail medium;
+                private Thumbnail high;
+                private Thumbnail standard;
+                private Thumbnail maxres;
+
+                public static class Thumbnail {
+                    private String url;
+                    private int width;
+                    private int height;
+                }
+            }
+
+            public static class ResourceId {
+                private String kind;
+                private String videoId;
+            }
+        }
+    }
+}
