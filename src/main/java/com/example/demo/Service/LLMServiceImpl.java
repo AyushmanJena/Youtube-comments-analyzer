@@ -73,7 +73,6 @@ public class LLMServiceImpl implements LLMService{
         return llmResponsesForPlaylist;
     }
 
-
     @Override
     public String test(String prompt) {
         String api = API_URL + api_key;

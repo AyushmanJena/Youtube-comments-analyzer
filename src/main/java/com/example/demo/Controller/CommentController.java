@@ -24,8 +24,8 @@ public class CommentController {
 
     @GetMapping("/testvideo")
     public void getComments(){ // change to ResponseEntity
-        String testVideoId = "oDplLI2LtsU"; // video with comments turned off
-        // String testVideoId = "70tx7KcMROc"; // kunal kushwaha linked list video
+        //String testVideoId = "oDplLI2LtsU"; // video with comments turned off
+        String testVideoId = "70tx7KcMROc"; // kunal kushwaha linked list video
         ArrayList<CommentsModel> relevantData = commentService.getComments(testVideoId); // video id
         String result = llmService.getVideoReview(relevantData);
         System.out.println(result);
@@ -79,7 +79,6 @@ public class CommentController {
             System.out.println("==========================================================================\n\n");
         }
     }
-
 
     @GetMapping("/test")
     public void test(){

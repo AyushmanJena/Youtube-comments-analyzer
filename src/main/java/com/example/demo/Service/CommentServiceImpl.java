@@ -37,11 +37,6 @@ public class CommentServiceImpl implements CommentService {
     public CommentResponse getTopCommentsList(String videoId) throws Exception {  // returns the whole response for a single video
         String api = API + "&key="+ key + "&videoId=" + videoId;
         ResponseEntity<CommentResponse> response = restTemplate.exchange(api, HttpMethod.GET, null, CommentResponse.class);
-
-        if(response.getStatusCode() == HttpStatusCode.valueOf(403)){
-            System.out.println("Comments Turned Off");
-        }
-
         CommentResponse body = response.getBody();
         return body;
     }
@@ -49,9 +44,16 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public PlaylistResponse getPlaylistList(String playlistId) { // returns the whole response for playlist
         String api = playlistAPI + playlistId + "&key=" + key;
-        ResponseEntity<PlaylistResponse> response = restTemplate.exchange(api, HttpMethod.GET, null, PlaylistResponse.class);
-        PlaylistResponse body = response.getBody();
-        return body;
+        ResponseEntity<PlaylistResponse> response;
+        PlaylistResponse playlistResponse = new PlaylistResponse();
+        try{
+            response = restTemplate.exchange(api, HttpMethod.GET, null, PlaylistResponse.class);
+        }catch(Exception e){
+            System.out.println("Playlist error");
+            return playlistResponse;
+        }
+        playlistResponse = response.getBody();
+        return playlistResponse;
     }
 
     @Override
@@ -61,6 +63,7 @@ public class CommentServiceImpl implements CommentService {
         ArrayList<CommentsModel> recentComments = getCommentWithOrder(videoId, "time");
         ArrayList<CommentsModel> relevantComments = getCommentWithOrder(videoId, "relevance");
 
+        // making sure the comments are not duplicated
         if(recentComments.size() < resultsCount){
             return recentComments;
         }
@@ -89,10 +92,8 @@ public class CommentServiceImpl implements CommentService {
                 if(item.getSnippet() != null && item.getId() != null){
                     String videoId = item.getSnippet().getResourceId().getVideoId();
                     String title = item.getSnippet().getTitle();
-                    int views = 0;
-                    int likes = 0;
                     ArrayList<CommentsModel> comments = getComments(videoId);
-                    result.add(new VideoModel(videoId, title, views, likes, comments));
+                    result.add(new VideoModel(videoId, title, 0, 0, comments));
                 }
             }
         }
@@ -102,9 +103,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public ArrayList<CommentsModel> getCommentWithOrder(String videoId, String order) { // order can be relevance or time only
         String api = API + " &key="+ key + "&videoId=" + videoId + "&order=" + order;
-        ResponseEntity<CommentResponse> response = restTemplate.exchange(api, HttpMethod.GET, null, CommentResponse.class);
+        ResponseEntity<CommentResponse> response;
+        try{
+            response = restTemplate.exchange(api, HttpMethod.GET, null, CommentResponse.class);
+        }catch(Exception e){
+            System.out.println("Comments Error");
+            return new ArrayList<>();
+        }
         CommentResponse body = response.getBody();
-
         ArrayList<CommentsModel> comments = new ArrayList<>();
 
         if(body.getItems() != null){
