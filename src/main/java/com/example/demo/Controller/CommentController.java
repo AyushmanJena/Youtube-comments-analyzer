@@ -62,7 +62,6 @@ public class CommentController {
         }
     }
 
-
     public void displayCommentsOfVideo(ArrayList<CommentsModel> commentsModels){
         for(CommentsModel comment : commentsModels){
             System.out.println("comment : " + comment.getText());

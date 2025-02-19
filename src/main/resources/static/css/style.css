@@ -1,0 +1,28 @@
+header {
+    text-align : center;
+    background-color : white;
+    padding : 20px;
+    color : black;
+    font-size : 1.5rem
+}
+
+body{
+    background-color : #FFCACA;
+}
+
+#home-elements {
+    color : green
+}
+
+.rounded-button {
+    background-color: #FFCACA;
+    color: black;
+    border-radius: 40px;
+    padding: 10px;
+    align : center
+}
+
+footer{
+    display : block;
+    unicode-bidi : isolate;
+}

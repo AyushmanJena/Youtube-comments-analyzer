@@ -23,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
     // "https://www.googleapis.com/youtube/v3/commentThreads?key=---------------------------&textFormat=plainText&part=snippet&videoId=TYYkFky5pkA&maxResults=50"
     // "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=PLHD9dyKTwCNKP-vxlnLNCJxAoTkzLD_GX&key=--------------------"
 
-    private final int resultsCount = 5; // number of results to get for each order
+    private final int resultsCount = 10; // number of results to get for each order
     private final String API = "https://www.googleapis.com/youtube/v3/commentThreads?maxResults="+resultsCount+"&textFormat=plainText&part=snippet";
     private final String playlistAPI = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=";
 
