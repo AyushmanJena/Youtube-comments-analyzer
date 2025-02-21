@@ -48,10 +48,16 @@ public class LLMServiceImpl implements LLMService{
 
     @Override
     public String getVideoReview(ArrayList<CommentsModel> comments) {
+
+        if(comments.isEmpty()){
+            System.out.println("llm did not get the comments for this video");
+            return "comments unavailable";
+        }
+
         String prePrompt = "Here is a list of comments from a video, go through the comments " +
                 "in short list if any topics are not explained well or missed " +
-                "and also if the video should be skipped or not ?" + "also rate the video according to the comments on a scale of 1 to 5. "
-                + "Answer within 3-4 lines.";
+                "and also if the video should be skipped or not ?" + "also give a rating to the video according to the comments on a scale of 1 to 5. "
+                + "Answer within 5-6 lines. Keep the output format : '<rating>/5$<review>$'";
 
         StringBuilder commentsStr = new StringBuilder();
 
@@ -65,12 +71,44 @@ public class LLMServiceImpl implements LLMService{
     }
 
     @Override
-    public ArrayList<String> getPlaylistReview(ArrayList<VideoModel> videos){
-        ArrayList<String> llmResponsesForPlaylist = new ArrayList<>();
+    public ArrayList<VideoModel> getPlaylistReview(ArrayList<VideoModel> videos){
+        // ArrayList<String> llmResponsesForPlaylist = new ArrayList<>();
         for(VideoModel video : videos){
-            llmResponsesForPlaylist.add(getVideoReview(video.getCommentsModel()));
+            if(video.getCommentsModel().isEmpty()){
+                video.setRating(0);
+                video.setCommentsSummary("Comments Unavailable");
+                System.out.println("llm did not get the comments video : " + video.getVideoId());
+                continue;
+            }
+            // extract rating and summary
+            // set rating and summary in the videomodel object
+            String response = getVideoReview(video.getCommentsModel());
+            // System.out.println(response);
+            String strRating = response.substring(0,1);
+            int rating = Integer.parseInt(strRating);
+            String summary = response.substring(4, response.length()-1);
+            video.setRating(rating);
+            video.setCommentsSummary(summary);
         }
-        return llmResponsesForPlaylist;
+        return videos;
+    }
+
+    @Override
+    public VideoModel getVideoReview(VideoModel video) {
+        if(video.getCommentsModel().isEmpty()){
+            System.out.println("llm did not get the comments video : " + video.getVideoId());
+            return video;
+        }
+        // extract rating and summary
+        // set rating and summary in the videomodel object
+        String response = getVideoReview(video.getCommentsModel());
+        // System.out.println(response);
+        String strRating = response.substring(0,1);
+        int rating = Integer.parseInt(strRating);
+        String summary = response.substring(4, response.length()-1);
+        video.setRating(rating);
+        video.setCommentsSummary(summary);
+        return video;
     }
 
     @Override

@@ -12,22 +12,23 @@
     <label for="playlist">PLAYLIST</label><br>
     <br><br>
 
-    <label for="link">Enter Link</label><br>
+    <label for="link">Enter Id</label><br>
     <input type = "text" id = "link" name = "link" required>
     <br><br>
     <button type = "submit" value = "submit">Analyze</button>
 </form>
-
+<br>
+<br><
 <div class = "video-results">
     <div th:each="result : ${results}" class = "result-card">
         <div>
-            <h4>Video Title</h4>
-            <h6>Rating : 3/5</h6>
-            <p class="description"><span th:text="${result}">Desc</span></p>
+            <img th:src="${result.thumbnailURL}" alt="thumbnail unavailable">
+            <h4><span th:text="${result.title}">Title</span></h4>
+            <h6>Rating : <span th:text="${result.rating}">Rating</span></h6>
+            <p class="description"><span th:text="${result.commentsSummary}">Desc</span></p>
             <hr>
         </div>
     </div>
-
 </div>
 
 </body>

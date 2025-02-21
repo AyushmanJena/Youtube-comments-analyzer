@@ -5,18 +5,20 @@ import java.util.ArrayList;
 public class VideoModel {
     private String videoId;
     private String title;
-    private int views;
-    private int likes;
     private ArrayList<CommentsModel> commentsModel;
+
+    // added newly
+    private String thumbnailURL;
+    private int rating;
+    private String commentsSummary;
 
     public VideoModel() {}
 
-    public VideoModel(String videoId, String title, int views, int likes, ArrayList<CommentsModel> commentsModel) {
+    public VideoModel(String videoId, String title, ArrayList<CommentsModel> commentsModel, String thumbnailURL) {
         this.videoId = videoId;
         this.title = title;
-        this.views = views;
-        this.likes = likes;
         this.commentsModel = commentsModel;
+        this.thumbnailURL = thumbnailURL;
     }
 
     public String getTitle() {
@@ -25,22 +27,6 @@ public class VideoModel {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public int getViews() {
-        return views;
-    }
-
-    public void setViews(int views) {
-        this.views = views;
-    }
-
-    public int getLikes() {
-        return likes;
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
     }
 
     public ArrayList<CommentsModel> getCommentsModel() {
@@ -57,5 +43,29 @@ public class VideoModel {
 
     public void setVideoId(String videoId) {
         this.videoId = videoId;
+    }
+
+    public String getThumbnailURL() {
+        return thumbnailURL;
+    }
+
+    public void setThumbnailURL(String thumbnailURL) {
+        this.thumbnailURL = thumbnailURL;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public String getCommentsSummary() {
+        return commentsSummary;
+    }
+
+    public void setCommentsSummary(String commentsSummary) {
+        this.commentsSummary = commentsSummary;
     }
 }

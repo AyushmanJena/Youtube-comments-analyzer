@@ -4,17 +4,16 @@ import com.example.demo.Model.CommentsModel;
 import com.example.demo.Model.VideoModel;
 import com.example.demo.Response.CommentResponse;
 import com.example.demo.Response.PlaylistResponse;
+import com.example.demo.Response.VideoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -23,8 +22,9 @@ public class CommentServiceImpl implements CommentService {
     // "https://www.googleapis.com/youtube/v3/commentThreads?key=---------------------------&textFormat=plainText&part=snippet&videoId=TYYkFky5pkA&maxResults=50"
     // "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=PLHD9dyKTwCNKP-vxlnLNCJxAoTkzLD_GX&key=--------------------"
 
-    private final int resultsCount = 10; // number of results to get for each order
-    private final String API = "https://www.googleapis.com/youtube/v3/commentThreads?maxResults="+resultsCount+"&textFormat=plainText&part=snippet";
+    private final int resultsCount = 5; // number of results to get for each order
+    private final String overviewAPI = "https://www.googleapis.com/youtube/v3/videos?textFormat=plainText&part=snippet";
+    private final String commentsAPI = "https://www.googleapis.com/youtube/v3/commentThreads?maxResults="+resultsCount+"&textFormat=plainText&part=snippet";
     private final String playlistAPI = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=";
 
     @Value("${yt.api.key}")
@@ -35,10 +35,24 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentResponse getTopCommentsList(String videoId) throws Exception {  // returns the whole response for a single video
-        String api = API + "&key="+ key + "&videoId=" + videoId;
+        String api = commentsAPI + "&key="+ key + "&videoId=" + videoId;
         ResponseEntity<CommentResponse> response = restTemplate.exchange(api, HttpMethod.GET, null, CommentResponse.class);
         CommentResponse body = response.getBody();
         return body;
+    }
+
+    @Override
+    public VideoModel getVideoOverview(String videoId) {
+        String api = overviewAPI + "&key=" + key + "&id=" + videoId;
+        ResponseEntity<VideoResponse> response = restTemplate.exchange(api, HttpMethod.GET, null, VideoResponse.class);
+        // String videoId, String title, ArrayList<CommentsModel> commentsModel, String thumbnailURL
+
+        String title = response.getBody().getItems().get(0).getSnippet().getTitle();
+        ArrayList<CommentsModel> commentsModel = getComments(videoId);
+        String thumbnailUrl = response.getBody().getItems().get(0).getSnippet().getThumbnails().getMedium().getUrl();
+
+        VideoModel videoModel = new VideoModel(videoId, title, commentsModel, thumbnailUrl);
+        return videoModel;
     }
 
     @Override
@@ -57,10 +71,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public ArrayList<CommentsModel> getComments(String videoId) { // takes video link and return list of comments
+    public ArrayList<CommentsModel> getComments(String videoId) { // takes video link and return list of comments with both orders included
         HashMap<String, CommentsModel> map = new HashMap();
 
         ArrayList<CommentsModel> recentComments = getCommentWithOrder(videoId, "time");
+        if(recentComments.isEmpty()){
+            return recentComments;
+        }
         ArrayList<CommentsModel> relevantComments = getCommentWithOrder(videoId, "relevance");
 
         // making sure the comments are not duplicated
@@ -93,7 +110,10 @@ public class CommentServiceImpl implements CommentService {
                     String videoId = item.getSnippet().getResourceId().getVideoId();
                     String title = item.getSnippet().getTitle();
                     ArrayList<CommentsModel> comments = getComments(videoId);
-                    result.add(new VideoModel(videoId, title, 0, 0, comments));
+                    String thumbnailURL = item.getSnippet().getThumbnails().getMedium().getUrl();
+                    result.add(new VideoModel(videoId, title, comments, thumbnailURL));
+                }else{
+                    System.out.println("could not retrieve video data getPlaylistComments : CommentServiceController");
                 }
             }
         }
@@ -102,12 +122,12 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public ArrayList<CommentsModel> getCommentWithOrder(String videoId, String order) { // order can be relevance or time only
-        String api = API + " &key="+ key + "&videoId=" + videoId + "&order=" + order;
+        String api = commentsAPI + " &key="+ key + "&videoId=" + videoId + "&order=" + order;
         ResponseEntity<CommentResponse> response;
         try{
             response = restTemplate.exchange(api, HttpMethod.GET, null, CommentResponse.class);
         }catch(Exception e){
-            System.out.println("Comments Error");
+            // System.out.println("Comments Error");
             return new ArrayList<>();
         }
         CommentResponse body = response.getBody();
@@ -126,4 +146,6 @@ public class CommentServiceImpl implements CommentService {
         }
         return comments;
     }
+
+
 }

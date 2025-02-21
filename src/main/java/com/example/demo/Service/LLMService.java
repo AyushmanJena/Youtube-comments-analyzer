@@ -14,5 +14,7 @@ public interface LLMService {
 
     public String getResultsFromLLM(String input);
 
-    public ArrayList<String> getPlaylistReview(ArrayList<VideoModel> videos);
+    public ArrayList<VideoModel> getPlaylistReview(ArrayList<VideoModel> videos);
+
+    public VideoModel getVideoReview(VideoModel video);
 }

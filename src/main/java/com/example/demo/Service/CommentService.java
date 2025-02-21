@@ -14,4 +14,6 @@ public interface CommentService {
     public ArrayList<VideoModel> getPlaylistComments(String playlistId);
 
     public ArrayList<CommentsModel> getCommentWithOrder(String videoId, String order);
+
+    public VideoModel getVideoOverview(String videoId);
 }

@@ -31,17 +31,27 @@ public class YoutubeController {
 
     @GetMapping("/video-result/{videoId}")
     public String homeWithResults(@PathVariable String videoId, Model model){
-        ArrayList<CommentsModel> relevantData = commentService.getComments(videoId); // video id
-        String result = llmService.getVideoReview(relevantData);
-        model.addAttribute("results", result);
+        VideoModel video = commentService.getVideoOverview(videoId); // video id
+
+        if(video.getCommentsModel().isEmpty()){
+            video.setCommentsSummary("Comments Unavailable");
+            video.setRating(0);
+            // System.out.println("Comments could not be retrieved for video : " + videoId);
+        }else{
+            video = llmService.getVideoReview(video);
+        }
+        ArrayList<VideoModel> videoModel = new ArrayList<>();
+        videoModel.add(video);
+
+        model.addAttribute("results", videoModel);
         return "index";
     }
 
     @GetMapping("/playlist-result/{playlistId}")
     public String homeWithResultsPlaylist(@PathVariable String playlistId, Model model){
-        ArrayList<VideoModel> videos = commentService.getPlaylistComments(playlistId);
-        ArrayList<String> results = llmService.getPlaylistReview(videos);
-        model.addAttribute("results", results);
+        ArrayList<VideoModel> videos = commentService.getPlaylistComments(playlistId); // now we have video id, title, comments, thumbnail in each model
+        videos = llmService.getPlaylistReview(videos);
+        model.addAttribute("results", videos);
         return "index";
     }
 
@@ -60,8 +70,6 @@ public class YoutubeController {
             // change return statement redirection as well
             return "redirect:/playlist-result/"+link;
         }
-
-
     }
 
 

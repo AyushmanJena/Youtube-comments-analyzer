@@ -26,9 +26,14 @@ public class CommentController {
     public void getComments(){ // change to ResponseEntity
         //String testVideoId = "oDplLI2LtsU"; // video with comments turned off
         String testVideoId = "70tx7KcMROc"; // kunal kushwaha linked list video
-        ArrayList<CommentsModel> relevantData = commentService.getComments(testVideoId); // video id
-        String result = llmService.getVideoReview(relevantData);
-        System.out.println(result);
+        VideoModel videoModel = commentService.getVideoOverview(testVideoId);
+        videoModel = llmService.getVideoReview(videoModel);
+        // testing if the code works
+        System.out.println(videoModel.getVideoId());
+        System.out.println(videoModel.getTitle());
+        System.out.println(videoModel.getThumbnailURL());
+        System.out.println(videoModel.getRating());
+        System.out.println(videoModel.getCommentsSummary());
         // displayCommentsOfVideo(relevantData);
     }
 
@@ -37,36 +42,36 @@ public class CommentController {
         String testPlaylistId = "PLKl5GqiLaCq3XBSy-vM2_CsZ5HQK4vGR_"; // Educational videos playlist
         // String testPlaylistId = "PLHD9dyKTwCNKP-vxlnLNCJxAoTkzLD_GX"; // some random ess videos playlist
         ArrayList<VideoModel> videos = commentService.getPlaylistComments(testPlaylistId);
-        ArrayList<String> result = llmService.getPlaylistReview(videos);
-        for(String str : result){
-            System.out.println(str);
-        }
+        videos = llmService.getPlaylistReview(videos);
         // displayCommentsOfPlaylist(videos);
     }
 
     // with custom video in the url
     @GetMapping("/video/{videoId}")
     public void getVideoCommentDetails(@PathVariable String videoId){
-        ArrayList<CommentsModel> relevantData = commentService.getComments(videoId); // video id
-        String result = llmService.getVideoReview(relevantData);
-        System.out.println(result);
+        VideoModel video = commentService.getVideoOverview(videoId); // video id
+
+        if(video.getCommentsModel().isEmpty()){
+            System.out.println("Comments could not be retrieved for video : " + videoId);
+        }else{
+            video = llmService.getVideoReview(video);
+        }
+        System.out.println(video.getCommentsSummary());
     }
 
     // with custom playlist in the url
     @GetMapping("/playlist/{playlistId}")
     public void getPlaylistCommentDetails(@PathVariable String playlistId){
         ArrayList<VideoModel> videos = commentService.getPlaylistComments(playlistId);
-        ArrayList<String> result = llmService.getPlaylistReview(videos);
-        for(String str : result){
-            System.out.println(str);
+        videos = llmService.getPlaylistReview(videos);
+        for(VideoModel videoModel : videos){
+            System.out.println(videoModel.getCommentsSummary());
         }
     }
 
     public void displayCommentsOfVideo(ArrayList<CommentsModel> commentsModels){
         for(CommentsModel comment : commentsModels){
             System.out.println("comment : " + comment.getText());
-            System.out.println("Like count : " + comment.getLikeCount());
-            System.out.println("Updated At : " + comment.getUpdatedAt());
             System.out.println("-----------------------------------------------------------------------");
         }
     }
@@ -75,6 +80,11 @@ public class CommentController {
         for(VideoModel video : videos){
             System.out.println("TITLE : " + video.getTitle());
             displayCommentsOfVideo(video.getCommentsModel());
+            System.out.println(video.getVideoId());
+            System.out.println(video.getTitle());
+            System.out.println(video.getThumbnailURL());
+            System.out.println(video.getRating());
+            System.out.println(video.getCommentsSummary());
             System.out.println("==========================================================================\n\n");
         }
     }
