@@ -86,7 +86,7 @@ public class LLMServiceImpl implements LLMService{
             // System.out.println(response);
             String strRating = response.substring(0,1);
             int rating = Integer.parseInt(strRating);
-            String summary = response.substring(4, response.length()-1);
+            String summary = response.substring(4, response.length()-2);
             video.setRating(rating);
             video.setCommentsSummary(summary);
         }

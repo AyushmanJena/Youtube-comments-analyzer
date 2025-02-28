@@ -1,35 +1,65 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Youtube Analyzer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<header>
+    <img id="logo" th:src="@{youtube-analyzer-logo.png}">
+    <h1>YT Video Analyzer</h1>
+</header>
 
 <form th:action = "@{/processInputData}" method = "POST">
-    <input type="radio" id="video" name="link-type" value="video">
-    <label for="video">VIDEO</label><br>
-    <input type="radio" id="playlist" name="link-type" value="playlist">
-    <label for="playlist">PLAYLIST</label><br>
-    <br><br>
-
-    <label for="link">Enter Id</label><br>
-    <input type = "text" id = "link" name = "link" required>
-    <br><br>
-    <button type = "submit" value = "submit">Analyze</button>
+    <div class="radio-group">
+        <input type="radio" id="video" name="link-type" value="video">
+        <label for="video">VIDEO</label>
+        <input type="radio" id="playlist" name="link-type" value="playlist">
+        <label for="playlist">PLAYLIST</label>
+    </div>
+    <div class="input-container">
+        <input type="text" id="link" name="link" placeholder="Enter Id" required>
+        <br><br>
+        <button class = "analyze-button" type="submit" value="submit">Analyze</button>
+    </div>
 </form>
+
 <br>
-<br><
+<br>
 <div class = "video-results">
     <div th:each="result : ${results}" class = "result-card">
-        <div>
-            <img th:src="${result.thumbnailURL}" alt="thumbnail unavailable">
-            <h4><span th:text="${result.title}">Title</span></h4>
-            <h6>Rating : <span th:text="${result.rating}">Rating</span></h6>
-            <p class="description"><span th:text="${result.commentsSummary}">Desc</span></p>
-            <hr>
+        <div class = "default-view">
+            <img class = "thumbnail" th:src="${result.thumbnailURL}" alt="thumbnail unavailable">
+            <div>
+                <h4 class="title"><span th:text="${result.title}">Title</span></h4>
+                <br>
+                <h6>Rating : <span th:text="${result.rating}">Rating</span></h6>
+            </div>
+            <button class="toggle-description">▼</button>
         </div>
+        <p class="description"><span th:text="${result.commentsSummary}">Description</span></p>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".description").forEach(desc => desc.style.display = "none");
+    });
+
+    document.querySelectorAll(".toggle-description").forEach(button => {
+    button.addEventListener("click", function() {
+        var card = this.closest(".result-card"); // Find the parent card
+        var description = card.querySelector(".description"); // Find the description inside it
+        if (description.style.display === "none" || description.style.display === "") {
+            description.style.display = "block";
+            this.textContent = "▲";
+        } else {
+            description.style.display = "none";
+            this.textContent = "▼";
+        }
+    });
+});
+</script>
 
 </body>
 </html>
