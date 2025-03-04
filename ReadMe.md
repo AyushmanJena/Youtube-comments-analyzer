@@ -5,7 +5,26 @@ YouTube Comments Analyzer got you covered. :)
 
 Get comments from a video or each video in a playlist. Then get the comments summarized by Google Gemini with a rating as well. And decide for yourself if the video is even worth watching.
 
-## How to use :
+## Screenshots
+Homepage
+![image info](./screenshots/home.png)
+
+Video Input into form
+![image info](./screenshots/video-input.png)
+
+Video Output
+![image info](./screenshots/video-output.png)
+
+Playlist Input into Form
+![image info](./screenshots/playlist-input.png)
+
+Playlist Output
+![image info](./screenshots/playlist-output.png)
+
+Expanded Summary View
+![image info](./screenshots/expanded-view.png)
+
+## How to use
 1. Go to "src/main/resources"
 2. Create a file named "api-keys.properties"
 3. Add the following code to the file :

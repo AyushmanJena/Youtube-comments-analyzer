@@ -6,7 +6,7 @@
 </head>
 <body>
 <header>
-    <img id="logo" th:src="@{youtube-analyzer-logo.png}">
+<!--    <img id="logo" th:src="@{/images/youtube-analyzer-logo.png}">-->
     <h1>YT Video Analyzer</h1>
 </header>
 
@@ -29,7 +29,7 @@
 <div class = "video-results">
     <div th:each="result : ${results}" class = "result-card">
         <div class = "default-view">
-            <img class = "thumbnail" th:src="${result.thumbnailURL}" alt="thumbnail unavailable">
+            <a th:href="@{'https://www.youtube.com/watch?v=' + ${result.videoId}}"><img class = "thumbnail" th:src="${result.thumbnailURL}" alt="thumbnail unavailable"></a>
             <div>
                 <h4 class="title"><span th:text="${result.title}">Title</span></h4>
                 <br>
